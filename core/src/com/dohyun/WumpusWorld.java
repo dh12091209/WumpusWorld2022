@@ -39,6 +39,28 @@ public class WumpusWorld {
         windTile = new Texture("windTile.png");
         tileWidth = blackTile.getWidth();
     }
+
+    public Location covertCoordsToRowCol(int x, int y){
+        int row; //y
+        int col; //x
+        //x=30,col =0
+        col = (x-xoffset)/50;
+        //y=73,row=0
+        //y=130,row = 1
+        row=(y-50)/50; // not happy with this solution but works
+
+        return new Location(row,col);
+    }
+
+    public boolean isValid(Location loc){
+        return loc.getRow() >= 0 && loc.getRow()<world.length && loc.getCol() >=0 && loc.getCol() < world[0].length;
+    }
+
+    public void placeTile(int tileId, Location loc){
+        if(isValid(loc))
+            world[loc.getRow()][loc.getCol()] = tileId;
+
+    }
     public void draw(SpriteBatch spriteBatch){
         for (int row=0; row<world.length; row++){
             for (int col=0; col < world[row].length; col++){
