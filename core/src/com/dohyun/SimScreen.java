@@ -79,7 +79,7 @@ public class SimScreen implements Screen {
         if(runAI && !simOver){
             dude.step();
             try {
-                Thread.sleep(100);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

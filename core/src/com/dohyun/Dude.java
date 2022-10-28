@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.awt.*;
+import java.util.Stack;
 
 public class Dude {
     private Location loc;
@@ -12,11 +13,17 @@ public class Dude {
     private boolean HasGold = false;
     private int totalSteps = 0;
     private boolean killedWumpus = false;
+    private Stack<Location> stack = new Stack<>();
+    private boolean visited[][];
+
     public Dude(Location loc, WumpusWorld myWorld){
         this.loc = loc;
         this.myWorld = myWorld;
+        stack.push(loc);
         texture = new Texture("guy.png");
         myWorld.makeVisible(loc);
+        visited = new boolean[10][10];
+        visited[9][0]=true;
     }
 
     public boolean KilledWumpus(){
@@ -86,10 +93,28 @@ public class Dude {
         }else {
             moveUp();
         }
+        if(loc != stack.lastElement()){
+            stack.push(loc);
+            if(visited[loc.getRow()][loc.getCol()]){
+                stack.pop();
+                loc = stack.lastElement();
+                totalSteps--;
+            }
+        }
     }
 
     //this method makes ONE step
     public void step(){
         randomAISolution();
+        visited[loc.getRow()][loc.getCol()] = true;
+        System.out.println(stack.lastElement().toString());
+        if(myWorld.getTileId(loc) == WumpusWorld.GROUND){
+            stack.push(loc);
+            System.out.println("hit ground");
+        }else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK){
+            stack.pop();
+            loc = stack.lastElement();
+            System.out.println("hit bad");
+        }
     }
 }
