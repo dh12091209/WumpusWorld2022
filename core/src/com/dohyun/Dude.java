@@ -19,11 +19,12 @@ public class Dude {
     public Dude(Location loc, WumpusWorld myWorld){
         this.loc = loc;
         this.myWorld = myWorld;
-        stack.push(loc);
+        stack.add(loc);
         texture = new Texture("guy.png");
         myWorld.makeVisible(loc);
         visited = new boolean[10][10];
         visited[9][0]=true;
+        System.out.println("Stack: " + stack);
     }
 
     public boolean KilledWumpus(){
@@ -69,6 +70,8 @@ public class Dude {
     public void reset(Location loc){
         this.loc = loc;
         myWorld.makeVisible(loc);
+        visited = new boolean[10][10];
+        visited[9][0]=true;
     }public void setTotalSteps(){
         totalSteps = 0;
     }
@@ -93,12 +96,27 @@ public class Dude {
         }else {
             moveUp();
         }
+        System.out.println("------------");
+        System.out.println("Stack: " + stack);
+        System.out.println("------------");
+        System.out.println(stack.size());
+        System.out.println("loc: " + loc.toString() + "stack: " + stack.lastElement().toString());
         if(loc != stack.lastElement()){
-            stack.push(loc);
+            stack.add(loc);
+            System.out.println("WORKING...");
             if(visited[loc.getRow()][loc.getCol()]){
                 stack.pop();
-                loc = stack.lastElement();
-                totalSteps--;
+                if(choice==1){
+                    moveUp();
+                }else if(choice==2){
+                    moveRight();
+                }else if(choice==3){
+                    moveLeft();
+                }else {
+                    moveDown();
+                }
+                System.out.println("get back: " + loc.toString());
+                totalSteps-=2;
             }
         }
     }
@@ -106,15 +124,15 @@ public class Dude {
     //this method makes ONE step
     public void step(){
         randomAISolution();
-        visited[loc.getRow()][loc.getCol()] = true;
         System.out.println(stack.lastElement().toString());
-        if(myWorld.getTileId(loc) == WumpusWorld.GROUND){
-            stack.push(loc);
+        if(myWorld.getTileId(loc) == WumpusWorld.GROUND && !visited[loc.getRow()][loc.getCol()] ){
+            stack.add(loc);
             System.out.println("hit ground");
-        }else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK){
+        }else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK&& !visited[loc.getRow()][loc.getCol()]){
             stack.pop();
             loc = stack.lastElement();
             System.out.println("hit bad");
         }
+        visited[loc.getRow()][loc.getCol()] = true;
     }
 }
