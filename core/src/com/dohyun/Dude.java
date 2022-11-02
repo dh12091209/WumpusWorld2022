@@ -15,11 +15,13 @@ public class Dude {
     private boolean killedWumpus = false;
     private Stack<Location> stack = new Stack<>();
     private boolean visited[][];
+    private boolean noway;
+
 
     public Dude(Location loc, WumpusWorld myWorld){
         this.loc = loc;
         this.myWorld = myWorld;
-        stack.add(loc);
+        stack.push(new Location(loc.getRow(),loc.getCol()));
         texture = new Texture("guy.png");
         myWorld.makeVisible(loc);
         visited = new boolean[10][10];
@@ -101,37 +103,55 @@ public class Dude {
         System.out.println("------------");
         System.out.println(stack.size());
         System.out.println("loc: " + loc.toString() + "stack: " + stack.lastElement().toString());
-        if(loc != stack.lastElement()){
-            stack.add(loc);
-            System.out.println("WORKING...");
-            if(visited[loc.getRow()][loc.getCol()]){
-                stack.pop();
-                if(choice==1){
-                    moveUp();
-                }else if(choice==2){
-                    moveRight();
-                }else if(choice==3){
-                    moveLeft();
-                }else {
-                    moveDown();
-                }
-                System.out.println("get back: " + loc.toString());
-                totalSteps-=2;
+        stack.push(new Location(loc.getRow(),loc.getCol()));
+        System.out.println("WORKING...");
+        if(visited[loc.getRow()][loc.getCol()]&& stack.get(0) != loc){
+            stack.pop();
+            if(choice==1){
+                moveUp();
+            }else if(choice==2){
+                moveRight();
+            }else if(choice==3){
+                moveLeft();
+            }else {
+                moveDown();
             }
-        }
-    }
+            System.out.println("get back: " + loc.toString());
+            totalSteps--;
+            }
 
+    }
+    public void foundGlitter(){
+
+    }
     //this method makes ONE step
     public void step(){
-        randomAISolution();
-        System.out.println(stack.lastElement().toString());
-        if(myWorld.getTileId(loc) == WumpusWorld.GROUND && !visited[loc.getRow()][loc.getCol()] ){
-            stack.add(loc);
-            System.out.println("hit ground");
-        }else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK&& !visited[loc.getRow()][loc.getCol()]){
+        noway = true;//
+        for(Location x : myWorld.getNeighbors(loc)){
+            if(!visited[x.getRow()][x.getCol()]) noway = false;
+        }
+        if(noway){
+            stack.pop();
+            loc = stack.lastElement();
+        }// if there is no way to go out, get back one.
+        if(myWorld.getTileId(loc) == WumpusWorld.GOLD){
+
+        }
+        else if(myWorld.getTileId(loc) == WumpusWorld.GLITTER){
+
+        }
+        else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK){
             stack.pop();
             loc = stack.lastElement();
             System.out.println("hit bad");
+
+        }else {
+            randomAISolution();
+            System.out.println(stack.lastElement().toString());
+            if (myWorld.getTileId(loc) == WumpusWorld.GROUND && !visited[loc.getRow()][loc.getCol()]) {
+                stack.push(new Location(loc.getRow(), loc.getCol()));
+                System.out.println("hit ground");
+            }
         }
         visited[loc.getRow()][loc.getCol()] = true;
     }
