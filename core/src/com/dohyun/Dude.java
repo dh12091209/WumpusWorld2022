@@ -143,7 +143,7 @@ public class Dude {
         */
         //else if(visited[loc.getRow()][loc.getCol()]&& stack.get(0) != loc){
         if(isMoved && visited[loc.getRow()][loc.getCol()]){
-            if (!stack.empty()) { 
+            if (!stack.empty()) {
                 Location poped = stack.pop();
                 //loc = stack.lastElement();
                 loc = new Location(stack.lastElement().getRow(), stack.lastElement().getCol());
@@ -162,7 +162,7 @@ public class Dude {
             }
             */
             totalSteps--;
-            }
+        }
 //        System.out.println("------------");
 
 
@@ -197,17 +197,23 @@ public class Dude {
     }
     //this method makes ONE step
     public void step(){
-        if(is_noway());// if there is no way to go out, get back one.
-        else if(myWorld.getTileId(loc) == WumpusWorld.EMPTYCHEST && !get_gold){
+        if(myWorld.getTileId(loc) == WumpusWorld.EMPTYCHEST || get_gold){
             get_gold = true;
+            if(stack.size() == 1 && get_gold ){
 
+            }
+            else if (!stack.empty()) {
+                stack.pop();
+                //loc = stack.lastElement();x
+                loc = new Location(stack.lastElement().getRow(), stack.lastElement().getCol());
+                //randomAISolution();
+            }
         }
+        else if(is_noway());// if there is no way to go out, get back one.
         else{
-            if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK||get_gold){
-                if(stack.size() == 1 && get_gold ){
+            if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK){
 
-                }
-                else if (!stack.empty()) {
+                if (!stack.empty()) {
                     stack.pop();
                     //loc = stack.lastElement();x
                     loc = new Location(stack.lastElement().getRow(), stack.lastElement().getCol());
