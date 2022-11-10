@@ -17,6 +17,7 @@ public class Dude {
     private Stack<Location> stack = new Stack<>();
     private boolean visited[][];
     private boolean noway;
+    private boolean get_gold;
 
 
     public Dude(Location loc, WumpusWorld myWorld){
@@ -92,6 +93,7 @@ public class Dude {
         visited[9][0]=true;
         stack.clear();
         stack.push(new Location(loc.getRow(), loc.getCol()));
+        get_gold = false;
     }public void setTotalSteps(){
         totalSteps = 0;
     }
@@ -196,16 +198,16 @@ public class Dude {
     //this method makes ONE step
     public void step(){
         if(is_noway());// if there is no way to go out, get back one.
+        else if(myWorld.getTileId(loc) == WumpusWorld.EMPTYCHEST && !get_gold){
+            get_gold = true;
+
+        }
         else{
+            if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK||get_gold){
+                if(stack.size() == 1 && get_gold ){
 
-            if(myWorld.getTileId(loc) == WumpusWorld.GOLD){
-
-            }
-            else if(myWorld.getTileId(loc) == WumpusWorld.GLITTER){
-
-            }
-            else if(myWorld.getTileId(loc) == WumpusWorld.WEB||myWorld.getTileId(loc) == WumpusWorld.WIND||myWorld.getTileId(loc) == WumpusWorld.STINK){
-                if (!stack.empty()) {
+                }
+                else if (!stack.empty()) {
                     stack.pop();
                     //loc = stack.lastElement();x
                     loc = new Location(stack.lastElement().getRow(), stack.lastElement().getCol());
